@@ -21,7 +21,7 @@ class PlanetService {
     }
 
     async getPlanetFromAPI(id) {
-        return this.app.swapiFunctions.genericRequest(`https://swapi.dev./api/planets/${id}`, 'GET', null, true);
+        return this.app.swapiFunctions.genericRequest(`https://swapi.dev/api/planets/${id}`, 'GET', null, true);
     }
     
 }

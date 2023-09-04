@@ -9,7 +9,11 @@ module.exports = (sequelize, DataTypes) => {
             height: DataTypes.INTEGER,
             homeworld_name: DataTypes.STRING,
             homeworld_id: DataTypes.STRING,
-        }, 
+            isWookiee: {
+                type : DataTypes.BOOLEAN,
+                defaultValue : false,
+            }
+        },
         {
             paranoid: true
         }

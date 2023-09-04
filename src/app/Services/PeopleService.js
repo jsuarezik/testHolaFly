@@ -9,16 +9,16 @@ class PeopleService {
     }
 
     async getPeopleById(id, lang) {
-        const people = await this.app.db.swPeople.findOne({where : {id: id}})
+        const people = await this.app.db.swPeople.findOne({where : {id: id, isWookiee : lang == 'wookiee'}})
         if (people) {
             return await peopleFactory(people, lang);
         } else {
-            const data = await this.getPeopleFromTheAPI(id);
+            const data = await this.getPeopleFromTheAPI(id, lang);
             if (!data.hasOwnProperty('detail')) {
-                //TODO Planet Service to get the planet name injected into the data OR work with associations TBD
-                const planetId= data.homeworld.match(/\/(\d+)\//);
+                const planetUrl= data.homeworld || data.acooscwoohoorcanwa;
+                const planetId= planetUrl.match(/\/(\d+)\//);
                 if (planetId && planetId[1]) {
-                    const planet = await this.PlanetService.getPlanetById(planetId);
+                    const planet = await this.PlanetService.getPlanetById(planetId[1]);
                     if (planet) {
                         return await peopleFactory({... data, homeworld_name: planet.name }, lang);
                     }
@@ -30,8 +30,8 @@ class PeopleService {
         return null;
     }
 
-    async getPeopleFromTheAPI(id) {
-        return this.app.swapiFunctions.genericRequest(`https://swapi.dev./api/people/${id}`, 'GET', null, false);
+    async getPeopleFromTheAPI(id, lang) {
+        return this.app.swapiFunctions.genericRequest(`https://swapi.dev/api/people/${id}${lang == 'wookiee' ? '?format=wookiee' : '' }`, 'GET', null, true);
     }
     
 }
