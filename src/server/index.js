@@ -9,14 +9,6 @@ const createExpressServer = async app => {
     
     await app.db.initDB();
 
-	server.get('/', async (req, res) => {
-		if(process.env.NODE_ENV === 'develop'){
-				res.send('Test Enviroment');
-		} else {
-		    res.sendStatus(200);
-		}
-    });
-
 	return server;
 };
 
