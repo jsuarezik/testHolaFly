@@ -1,6 +1,5 @@
 const { peopleFactory } = require("../People");
 
-
 class PeopleService {
 
     constructor(app) {

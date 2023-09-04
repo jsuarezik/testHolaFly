@@ -1,3 +1,7 @@
 const Planet = require('./Planet');
 
-module.exports = { Planet }
+const planetFactory = async model => {
+    return new Planet(model);
+}
+
+module.exports = { planetFactory }

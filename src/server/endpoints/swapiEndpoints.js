@@ -1,5 +1,6 @@
 const { peopleFactory } = require("../../app/People");
 const PeopleService = require("../../app/Services/PeopleService");
+const PlanetService = require("../../app/Services/PlanetService");
 
 const _isWookieeFormat = (req) => {
     if(req.query.format && req.query.format == 'wookiee'){
@@ -10,17 +11,15 @@ const _isWookieeFormat = (req) => {
 
 
 const applySwapiEndpoints = (server, app) => {
-
     server.get('/hfswapi/test', async (req, res) => {
         const data = await app.swapiFunctions.genericRequest('https://swapi.dev/api/', 'GET', null, true);
         res.send(data);
     });
 
     server.get('/hfswapi/getPeople/:id', async (req, res) => {
-        const db = app.db;
         const id = req.params.id;
         const lang = _isWookieeFormat(req) ? 'wookie' : 'human';
-        const peopleService = new PeopleService (app);
+        const peopleService = new PeopleService(app);
         const person = await peopleService.getPeopleById(id);
         if (person) {
             res.status(200).json( {
@@ -38,7 +37,22 @@ const applySwapiEndpoints = (server, app) => {
     });
 
     server.get('/hfswapi/getPlanet/:id', async (req, res) => {
-        res.sendStatus(501);
+        const id = req.params.id;
+        const planetService = new PlanetService(app);
+        const planet = await planetService.getPlanetById(id);
+        if (planet) {
+            res.status(200).json( {
+                data: planet,
+                succes: true,
+                message: 'success',
+            })
+        } else {
+            res.status(404).json( {
+                data: null,
+                succes: false,
+                message: 'ERROR_NOT_FOUND',
+            })
+        }
     });
 
     server.get('/hfswapi/getWeightOnPlanetRandom', async (req, res) => {
