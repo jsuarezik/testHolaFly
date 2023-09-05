@@ -1,5 +1,6 @@
 const { peopleFactory } = require("../People");
 const PlanetService = require("./PlanetService");
+const { getRandomNumber } = require('../utils');
 
 class PeopleService {
 
@@ -31,9 +32,14 @@ class PeopleService {
     }
 
     async getPeopleFromTheAPI(id, lang) {
-        return this.app.swapiFunctions.genericRequest(`https://swapi.dev/api/people/${id}${lang == 'wookiee' ? '?format=wookiee' : '' }`, 'GET', null, true);
+        return this.app.swapiFunctions.genericRequest(`https://swapi.dev/api/people/${id}${lang == 'wookiee' ? '?format=wookiee' : '' }`, 'GET', null, false);
     }
     
+
+    async getRandomPeople(lang) {
+        const randomValidId = getRandomNumber(1, 82);
+        return await this.getPeopleById(randomValidId, lang);
+    }
 }
 
 module.exports = PeopleService

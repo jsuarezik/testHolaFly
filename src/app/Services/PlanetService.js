@@ -1,4 +1,5 @@
 const { planetFactory } = require("../Planet");
+const { getRandomNumber } = require("../utils");
 
 class PlanetService {
 
@@ -21,7 +22,12 @@ class PlanetService {
     }
 
     async getPlanetFromAPI(id) {
-        return this.app.swapiFunctions.genericRequest(`https://swapi.dev/api/planets/${id}`, 'GET', null, true);
+        return this.app.swapiFunctions.genericRequest(`https://swapi.dev/api/planets/${id}`, 'GET', null, false);
+    }
+
+    async getRandomPlanet() {
+        const randomValidId = getRandomNumber(1, 60);
+        return this.getPlanetById(randomValidId);
     }
     
 }

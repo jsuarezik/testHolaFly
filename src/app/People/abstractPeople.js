@@ -34,8 +34,11 @@ class AbstractPeople {
         return this.homeworlId;
     }
 
-    getWeightOnPlanet(planetId){
-        throw new Error('To be implemented');
+    getWeightOnPlanet(planet){
+        if (this.getMass() == 'unknown' || planet.gravity == 'unknown' ) {
+            return 'unknown'
+        } 
+        return this.getMass() * planet.getGravity();
     }
 }
 

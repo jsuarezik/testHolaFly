@@ -25,11 +25,10 @@ const applySwapiEndpoints = (server, app) => {
             res.status(200).json( {
                 data: person,
                 succes: true,
-                message: 'success',
             })
         } else {
             res.status(404).json( {
-                data: null,
+                data: { message : 'People not found' },
                 succes: false,
                 message: 'ERROR_NOT_FOUND',
             })
@@ -44,11 +43,10 @@ const applySwapiEndpoints = (server, app) => {
             res.status(200).json( {
                 data: planet,
                 succes: true,
-                message: 'success',
             })
         } else {
             res.status(404).json( {
-                data: null,
+                data: { message : 'Planet not found'},
                 succes: false,
                 message: 'ERROR_NOT_FOUND',
             })
@@ -56,12 +54,41 @@ const applySwapiEndpoints = (server, app) => {
     });
 
     server.get('/hfswapi/getWeightOnPlanetRandom', async (req, res) => {
-        res.sendStatus(501);
+        const lang = _isWookieeFormat(req) ? 'wookiee' : 'human';
+        const peopleService = new PeopleService(app);
+        const planetService = new PlanetService(app);
+        const promises = await Promise.all( [
+            peopleService.getRandomPeople(lang),
+            planetService.getRandomPlanet(),
+        ]);
+        const [people, planet] = promises
+        console.log(people, planet)
+        if ((people && planet) && (people.homeworldName === planet.name)) {
+            res.status(422).json({
+                succes: false,
+                data: { message : "Person belongs to the same Planet"},
+                message : 'ERROR_SAME_PEOPLE_SAME_PLANET'
+            })
+        } else {
+            const weightOnPlanet = people.getWeightOnPlanet(planet);
+
+            res.status(200).json({
+                success: true,
+                data : {
+                    peopleName: people.name, 
+                    planetName: planet.name,
+                    weight: weightOnPlanet,
+                }
+            })
+        }
     });
 
     server.get('/hfswapi/getLogs',async (req, res) => {
         const data = await app.db.logging.findAll();
-        res.send(data);
+        res.status(200).json( {
+            success: true,
+            data : data, 
+        })
     });
 
 }
